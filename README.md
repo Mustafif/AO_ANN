@@ -1,6 +1,6 @@
 # American Options ANN
 
-> Note: This package uses Torch under ROCM v6.2.4, if you are not using an AMD GPU, you will need to replace the torch dependency with a compatible version for your GPU.
+> This is still a work in progress, all `v0.1.*` releases are testing releases.
 
 This is a Python package for American Options Pricing using Artificial Neural Networks (ANN)
 that assumes the option follows a GARCH process. The package will contain 3 stages of datasets
@@ -18,11 +18,19 @@ for 3 GARCH models:
 - `utils.py`: Contains utility functions for the package.
 
 
-This project uses the Python package manager `uv`, this can be installed using the following command:
+## Installation
+
 ```bash
-$ pip3 install uv
+pip install ao_ann
 ```
 
-> TODO: How to use `uv` and other information, first need to figure out the publishing process.
+## Running Locally
 
-Refer to the [License](LICENSE) file for licensing information.
+This project uses the Python package manager `uv`, this can be installed using the following command:
+```bash
+$ git clone https://github.com/Mustafif/AO_ANN.git
+$ cd AO_ANN
+$ pip3 install uv # install uv
+$ uv sync
+$ uv run main.py # run the main.py file
+```

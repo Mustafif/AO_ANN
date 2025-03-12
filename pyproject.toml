@@ -1,6 +1,6 @@
 [project]
 name = "ao_ann"
-version = "0.1.1"
+version = "0.1.2"
 description = "American Options Pricing ANN"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -24,4 +24,4 @@ dependencies = [
 core-metadata-version = "2.2"
 
 [tool.hatchling]
-packages = [{include = "ao_ann"}]
+packages = [{ include = "ao_ann" }]
