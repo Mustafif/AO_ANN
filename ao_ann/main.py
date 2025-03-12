@@ -193,7 +193,7 @@ def main(dataset_train, dataset_test, name, params_path):
 
 
 if __name__ == '__main__':
-    datasets_dir = "./datasets/"
+    datasets_dir = "../datasets/"
     datasets = [DS(d, None, os.path.splitext(os.path.basename(d))[0]) for d in glob.glob(f"{datasets_dir}/*.csv")]
     print(datasets[0].path)
     params_path = 'params.json'
