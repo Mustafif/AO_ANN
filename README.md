@@ -12,7 +12,8 @@ for 3 GARCH models:
 
 
 ## Project Structure
-- `main.py`: Contains the main entry point for the program, and is in charge of running the Training and Testing of the ANN model.
+- `ann.py`: Contains training and evaluation of the ANN model, as well as the main entry point for the program (`ao_ann_main(...)`)
+- `loss.py`: Contains the function to calculate the different loss measures between target and predicted values.
 - `model.py`: Contains the implementation of the ANN model used for pricing American Options.
 - `dataset.py`: Contains parsing the CSV files and preparing the data for training and testing.
 - `utils.py`: Contains utility functions for the package.
@@ -36,6 +37,6 @@ $ uv run main.py # run the main.py file
 ```
 
 ## Todo
-- [ ] Comments in the code
+- [X] Comments in the code
 - [ ] Documentation
 - [ ] Example program

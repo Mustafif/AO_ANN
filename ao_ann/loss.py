@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def calculate_loss(data_file, target_scaler):
     """
     Calculate various performance metrics between predictions and targets.
@@ -15,8 +16,8 @@ def calculate_loss(data_file, target_scaler):
     data = pd.read_csv(data_file)
 
     # Extract predictions and targets as numpy arrays
-    predictions = data['predictions'].to_numpy()
-    targets = data['targets'].to_numpy()
+    predictions = data["predictions"].to_numpy()
+    targets = data["targets"].to_numpy()
 
     # Inverse transform the scaled targets
     targets = target_scaler.inverse_transform(targets.reshape(-1, 1)).flatten()
@@ -24,7 +25,7 @@ def calculate_loss(data_file, target_scaler):
 
     # Calculate various metrics
     absolute_errors = np.abs(predictions - targets)  # Absolute errors
-    squared_errors = (predictions - targets) ** 2   # Squared errors
+    squared_errors = (predictions - targets) ** 2  # Squared errors
 
     # Mean Squared Error (MSE)
     mse = np.mean(squared_errors)
@@ -50,17 +51,17 @@ def calculate_loss(data_file, target_scaler):
 
     # Prepare detailed loss information
     loss_info = {
-        'total_samples': len(predictions),
-        'Mean of Predicted': mean_predicted,
-        'Mean of Targets': mean_target,
-        'MSE': mse,
-        'MAE': mae,
-        'RMSE': rmse,
-        'R^2': r2,
-        'MRE': mre,  # Mean Relative Error
-        'min_error': np.min(absolute_errors),
-        'max_error': np.max(absolute_errors),
-        'std_error': np.std(absolute_errors)
+        "total_samples": len(predictions),
+        "Mean of Predicted": mean_predicted,
+        "Mean of Targets": mean_target,
+        "MSE": mse,
+        "MAE": mae,
+        "RMSE": rmse,
+        "R^2": r2,
+        "MRE": mre,  # Mean Relative Error
+        "min_error": np.min(absolute_errors),
+        "max_error": np.max(absolute_errors),
+        "std_error": np.std(absolute_errors),
     }
 
     return loss_info

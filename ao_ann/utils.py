@@ -3,7 +3,19 @@ import json
 from datetime import datetime
 import torch
 import matplotlib.pyplot as plt
+
+
 def save_model_checkpoint(trained_model, name, metrics, tl, vl):
+    """
+    Save a trained model checkpoint along with its metrics and learning curves
+
+    Args:
+        trained_model: The trained PyTorch model to save
+        name: String name to use for the checkpoint folder
+        metrics: Dictionary of model metrics to save
+        tl: List of training loss values
+        vl: List of validation loss values
+    """
     # Create base directory
     base_dir = "saved_models"
     os.makedirs(base_dir, exist_ok=True)
@@ -14,20 +26,20 @@ def save_model_checkpoint(trained_model, name, metrics, tl, vl):
     # Create directory structure
     os.makedirs(save_dir, exist_ok=True)
 
-        # Define paths
+    # Define paths
     metrics_path = os.path.join(save_dir, "metrics.json")
     model_path = os.path.join(save_dir, "model.pt")
     graph_path = os.path.join(save_dir, "learning_curve.png")
 
-        # Save metrics
-    with open(metrics_path, 'w') as f:
+    # Save metrics
+    with open(metrics_path, "w") as f:
         json.dump(metrics, f, indent=4)
 
         # Save model
     scripted_model = torch.jit.script(trained_model)
     scripted_model.save(model_path)
 
-        # Save learning curve
+    # Save learning curve
     plt.figure(figsize=(8, 6))
     plt.plot(tl, label="Train Loss")
     plt.plot(vl, label="Validation Loss")
