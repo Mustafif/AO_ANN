@@ -102,7 +102,7 @@ def train_val_split(dataset, val_size=0.2, random_state=42):
 
     return train_sampler, val_sampler
 
-def main(dataset_train, dataset_test, name, params_path):
+def ao_ann_main(dataset_train, dataset_test, name, params_path):
     torch.set_float32_matmul_precision('high')
     num_workers = 6
     device = torch.device("cuda")

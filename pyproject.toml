@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 authors = [{ name = "Mustafif Khan", email = "me@mustafif.com" }]
 maintainers = [{ name = "Mustafif Khan", email = "me@mustafif.com" }]
+
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -25,3 +26,7 @@ core-metadata-version = "2.2"
 
 [tool.setuptools]
 packages = ["ao_ann"]
+
+[project.urls]
+Repository = "https://github.com/Mustafif/AO_ANN"
+Issues = "https://github.com/Mustafif/AO_ANN/issues"

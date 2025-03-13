@@ -36,6 +36,6 @@ $ uv run main.py # run the main.py file
 ```
 
 ## Todo
-
-- Fix the moduleness by `__init__.py`
-- Move all ann functions to `ann.py`
+- [ ] Comments in the code
+- [ ] Documentation
+- [ ] Example program
