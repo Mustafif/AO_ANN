@@ -1,17 +1,15 @@
-from model import AO_ANN
+from .model import AO_ANN
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler, SubsetRandomSampler
 import pandas as pd
-from loss import calculate_loss
+from .loss import calculate_loss
 import numpy as np
 import json
 import os
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-from utils import save_model_checkpoint
-from datetime import datetime
-from dataset import DS
+from .utils import save_model_checkpoint
+from .dataset import DS
 
 import glob
 
@@ -192,11 +190,10 @@ def main(dataset_train, dataset_test, name, params_path):
 
 
 
-if __name__ == '__main__':
-    datasets_dir = "../datasets/"
-    datasets = [DS(d, None, os.path.splitext(os.path.basename(d))[0]) for d in glob.glob(f"{datasets_dir}/*.csv")]
-    print(datasets[0].path)
-    params_path = 'params.json'
-    for dataset in datasets:
-        ds_train, ds_test = dataset.datasets()
-        main(ds_train, ds_test, dataset.name, params_path)
+# if __name__ == '__main__':
+#     datasets_dir = "../datasets/"
+#     datasets = [DS(d, None, os.path.splitext(os.path.basename(d))[0]) for d in glob.glob(f"{datasets_dir}/*.csv")]
+#     params_path = 'params.json'
+#     for dataset in datasets:
+#         ds_train, ds_test = dataset.datasets()
+#         main(ds_train, ds_test, dataset.name, params_path)

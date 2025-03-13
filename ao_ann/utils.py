@@ -3,8 +3,6 @@ import json
 from datetime import datetime
 import torch
 import matplotlib.pyplot as plt
-import importlib.resources as pkg_resources
-import ao_ann
 def save_model_checkpoint(trained_model, name, metrics, tl, vl):
     # Create base directory
     base_dir = "saved_models"
