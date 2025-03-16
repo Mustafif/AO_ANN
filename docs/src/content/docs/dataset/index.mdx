@@ -1,0 +1,30 @@
+---
+title: Dataset Handling
+description: Get started using the `ao_ann` package
+template: doc
+---
+
+In our model we handle the dataset loading using the `OptionDataset` class. This class
+accepts a `dataframe` from the `pandas` library, and will prepare the base, engineered features, and target variable.
+When used in the model, it also has the methods `__len__` and `__getitem__`.
+
+We also make use of two helper functions: `dataset_file` which just returns the `dataframe` from `pandas.read_csv`, and `dataset_dir` which returns the directory path to the dataset.
+and `cleandataset` which cleans the dataset by removing any entries where the option price is less than $0.5.
+
+With these two helper functions, the typical usage is as follows:
+
+```python
+from ao_ann import OptionDataset, cleandataset, dataset_file
+dataset = cleandataset(dataset_file("foo.csv"))
+option_dataset = OptionDataset(dataset)
+```
+
+However, if you are handling a dataset and want to automatically clean it, split the
+dataset into training and testing sets you can use the `DS` class.
+
+```python
+from ao_ann import DS
+train, test = DS(csv_path, None, name).datasets()
+```
+
+This is the recommended method for handling datasets in the `ao_ann` package.

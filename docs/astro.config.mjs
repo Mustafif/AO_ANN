@@ -15,7 +15,8 @@ export default defineConfig({
           label: "Documentation",
           items: [
             // Each item here is one entry in the navigation menu.
-            { label: "Get Started", slug: "get_started" },
+            { label: "Getting Started", slug: "get_started" },
+            { label: "Dataset Handling", slug: "dataset" },
           ],
         },
       ],
