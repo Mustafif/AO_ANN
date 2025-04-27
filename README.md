@@ -37,8 +37,3 @@ $ pip3 install uv # install uv
 $ uv sync
 $ uv run main.py # run the main.py file
 ```
-
-## Todo
-- [X] Comments in the code
-- [ ] Documentation
-- [ ] Example program

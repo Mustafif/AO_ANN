@@ -17,6 +17,7 @@ export default defineConfig({
             // Each item here is one entry in the navigation menu.
             { label: "Getting Started", slug: "get_started" },
             { label: "Dataset Handling", slug: "dataset" },
+            { label : "Running the Neural Network", slug: "ann"}
           ],
         },
       ],

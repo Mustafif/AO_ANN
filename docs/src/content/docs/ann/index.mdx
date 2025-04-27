@@ -1,0 +1,169 @@
+---
+title: Running the Neural Network
+description: Start using the neural network model
+template: doc
+---
+
+The default neural network model `AO_ANN` is a feedforward neural network which has the following structure:
+
+| **Parameters**        | **Options** |
+|-----------------------|-------------|
+| Hidden Layers         | 6           |
+| Neurons (each layer)  | 200         |
+| Activation            | Mish        |
+| Output Function       | Softplus    |
+| Dropout Rate          | 0           |
+| Layer Normalization   | Yes         |
+| Initialization        | He_Normal   |
+| Optimizer             | AdamW       |
+| Loss Function         | Huber Loss  |
+
+The `AO_ANN` class does allow to set the `input_features`, `hidden_size`, `dropout_rate` and `num_hidden_layers` parameters in the constructor.
+
+The recommended way to run the model is to use the `ao_ann_main` function which takes training and testing datasets as prepared in the previous section, a name for the dataset and the path for the hyperparameters.
+
+This function will run the training and evaluation of the model, and return the trained model, and the metrics on how it performed for in and out of sample.
+
+Consider the example from before:
+
+```python
+# import library
+from ao_ann import DS, ao_ann_main
+import glob
+import os
+datasets_dir = "./datasets/"
+# we can easily load all of the `datasets/*.csv` files using glob and pass their
+# file path to the `DS` type which expects `DS(path1, path2, name`, since we are doing the normal
+# 70-30 ratio, we only need to pass for `path1` and let `path2 be `None`, we also let the file's base name be
+# the name to pass to `DS`
+datasets = [DS(d, None, os.path.splitext(os.path.basename(d))[0]) for d in glob.glob(f"{datasets_dir}/*.csv")]
+# Define `params.json` as the path which includes the hyperparameters:
+# - lr
+# - weight_decay
+# - batch_size
+# - epochs
+# - dropout_rate
+params_path = 'params.json'
+for dataset in datasets:
+    # Creates a tuple of (OptionDataset, OptionDataset) which is what is used in the dataloader
+    # The first is the training dataset, and the second is the test
+    ds_train, ds_test = dataset.datasets()
+    # The ao_ann_main function is the main entry, and does the training, testing, and saves the model
+    ao_ann_main(ds_train, ds_test, dataset.name, params_path)
+
+```
+
+If you wish to see the entire process `ao_ann_main`, consider how its implemented in the source code:
+
+```python
+def ao_ann_main(dataset_train, dataset_test, name, params_path):
+    """
+    Main function for training and evaluating the AO-ANN model.
+
+    Args:
+        dataset_train: Training dataset
+        dataset_test: Test dataset
+        name: Name identifier for the model
+        params_path: Path to JSON file containing model hyperparameters
+
+    This function:
+    1. Sets up training environment (device, precision)
+    2. Loads hyperparameters from JSON
+    3. Creates data samplers and loaders for train/val/test
+    4. Initializes model, loss function and optimizer
+    5. Trains the model
+    6. Evaluates performance on train and test sets
+    7. Saves predictions and metrics to files
+    """
+    torch.set_float32_matmul_precision("high")
+    num_workers = 6
+    device = torch.device("cuda")
+    print(f"Using device: {device}")
+    params = json.load(open(params_path))
+    lr = params["lr"]
+    weight_decay = params["weight_decay"]
+    batch_size = params["batch_size"]
+
+    epochs = params["epochs"]
+    target_scaler = dataset_train.target_scaler
+
+    # Create samplers
+    train_sampler, val_sampler = train_val_split(dataset_train, val_size=0.2)
+    test_sampler = RandomSampler(dataset_test)
+
+    # Create data loaders
+    train_loader = DataLoader(
+        dataset_train,
+        batch_size=batch_size,
+        sampler=train_sampler,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+    val_loader = DataLoader(
+        dataset_train,  # Using test dataset for validation
+        batch_size=batch_size,
+        sampler=val_sampler,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+    test_loader = DataLoader(
+        dataset_test,
+        batch_size=batch_size,
+        sampler=test_sampler,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+    dropout_rate = params["dropout_rate"]
+    # Model setup
+    model = AO_ANN(dropout_rate=dropout_rate).to(device)
+    criterion = nn.HuberLoss()
+
+    optimizer = torch.optim.AdamW(
+        model.parameters(),
+        lr=lr,
+        weight_decay=weight_decay,
+        betas=(0.9, 0.999),
+        eps=1e-8,
+    )
+    # Training
+    trained_model, tl, vl = train_model(
+        model, train_loader, val_loader, criterion, optimizer, device, epochs=epochs
+    )
+
+    # Evaluation
+    train_loss, train_pred, train_target = evaluate_model(
+        trained_model, train_loader, criterion, device
+    )
+    test_loss, test_pred, test_target = evaluate_model(
+        trained_model, test_loader, criterion, device
+    )
+
+    # Convert predictions and targets to plain floats
+    train_pred = [float(x) for x in train_pred]
+    train_target = [float(x) for x in train_target]
+
+    test_pred = [float(x) for x in test_pred]
+    test_target = [float(x) for x in test_target]
+
+    # Save results
+    train_df = pd.DataFrame({"predictions": train_pred, "targets": train_target})
+    train_df.to_csv("train_results.csv", index=False)
+
+    test_df = pd.DataFrame({"predictions": test_pred, "targets": test_target})
+    test_df.to_csv("test_results.csv", index=False)
+
+    # Calculate and print loss details
+    print("In-sample (Training) Performance:")
+    train_loss_details = calculate_loss("train_results.csv", target_scaler)
+    for key, value in train_loss_details.items():
+        print(f"{key}: {value}")
+
+    print("\nOut-of-sample (Test) Performance:")
+    test_loss_details = calculate_loss("test_results.csv", target_scaler)
+    for key, value in test_loss_details.items():
+        print(f"{key}: {value}")
+
+    # Save metrics
+    metrics = {"in_sample": train_loss_details, "out_of_sample": test_loss_details}
+    save_model_checkpoint(trained_model, name, metrics, tl, vl)
+```
